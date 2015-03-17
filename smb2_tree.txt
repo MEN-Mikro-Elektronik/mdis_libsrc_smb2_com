@@ -1,0 +1,69 @@
+===== [ Target-Tree of fileset COM/LIBSRC/smb2 (2.24) ] =====
+|-DOXYGENTMPL
+|  | -------------------- 
+|  | DoxyfileCommon (1.3) 
+|  `-HTML
+|     | ------------------------ ------------------------ 
+|     | men_footer.html (1.10)   men_header.html (1.5)    
+|     ` men_stylesheet.css (1.7) menlogo.gif (1.4)        
+|-FILESETS
+|  | --------------------------- 
+|  ` mcvs_desc_version.txt (1.1) 
+|-INCLUDE
+|  `-COM
+|     `-MEN
+|        | ------------------ ------------------ ------------------ 
+|        | 16z001_smb.h (3.5) dbg.h (1.25)       maccess.h (1.18)   
+|        | men_typs.h (1.32)  mgt5200.h (2.27)   oss.h (1.54)       
+|        ` smb2.h (3.23)      
+`-LIBSRC
+   `-SMB2
+      |-COM
+      |  | --------------------- --------------------- 
+      |  | library.mak (1.7)     library_io.mak (1.3)  
+      |  | smb2_com.c (1.20)     smb2_ich.c (1.16)     
+      |  | smb2_menz001.c (1.19) smb2_mgt5200.c (1.10) 
+      |  ` smb2_sch.c (1.6)      
+      `-DOC
+         | -------------- 
+         | Doxyfile (1.2) 
+         `-html
+            | ------------------------------------ 
+            | annotated.html (1.27)                
+            | doxygen.png (1.1)                    
+            | dummy.html (1.27)                    
+            | files.html (1.27)                    
+            | functions.html (1.27)                
+            | functions_func.html (1.3)            
+            | functions_vars.html (1.3)            
+            | globals.html (1.27)                  
+            | globals_defs.html (1.3)              
+            | globals_func.html (1.3)              
+            | globals_type.html (1.3)              
+            | group____SMB2__ERR.html (1.27)       
+            | group____SMB2__FLAG.html (1.27)      
+            | index.hhc (1.4)                      
+            | index.hhk (1.12)                     
+            | index.hhp (1.8)                      
+            | index.html (1.27)                    
+            | men_stylesheet.css (1.2)             
+            | menlogo.gif (1.2)                    
+            | modules.html (1.27)                  
+            | pages.html (1.27)                    
+            | smb2_8h-source.html (1.27)           
+            | smb2_8h.html (1.27)                  
+            | smb2__com_8c.html (1.27)             
+            | smb2__ich_8c.html (1.27)             
+            | smb2__sch_8c.html (1.19)             
+            | structI2CMESSAGE.html (1.27)         
+            | structSMB__ALERT__NODE.html (1.27)   
+            | structSMB__COM__HANDLE.html (1.27)   
+            | structSMB__DESC__ALI1543.html (1.27) 
+            | structSMB__DESC__ICH.html (1.27)     
+            | structSMB__DESC__MENZ001.html (1.27) 
+            | structSMB__DESC__MGT5200.html (1.27) 
+            | structSMB__DESC__MPC85XX.html (1.27) 
+            | structSMB__DESC__PORTCB.html (1.27)  
+            | structSMB__DESC__SCH.html (1.20)     
+            | structSMB__ENTRIES.html (1.27)       
+            ` structSMB__HANDLE.html (1.27)        
