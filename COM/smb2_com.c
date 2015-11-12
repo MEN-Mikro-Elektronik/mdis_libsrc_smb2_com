@@ -231,7 +231,10 @@ u_int32 SMB_COM_Init
 {
 	u_int32     error  = 0;
 	SMB_HANDLE *smbHdl = (SMB_HANDLE*)smbHdlP;
+#ifndef SMB_NO_ALERT
 	u_int32 retVal;
+#endif
+
 	SMB_COM_HANDLE *smbComHdl = (SMB_COM_HANDLE *)((u_int8*)smbHdlP +
 														   sizeof(SMB_ENTRIES));
 	DBGCMD(	static const char functionName[] = "SMB2 - SMB_COM_Init"; )
