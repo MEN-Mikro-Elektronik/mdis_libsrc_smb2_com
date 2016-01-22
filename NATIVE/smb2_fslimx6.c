@@ -29,7 +29,7 @@
  ****************************************************************************/
 
 /* #define DBG */
- 
+
 #include <MEN/men_typs.h>
 #include <MEN/oss.h>
 #include <MEN/dbg.h>
@@ -38,6 +38,8 @@
 
 #define SMB_COMPILE
 #include <MEN/smb2.h>
+
+#include <hwif/util/vxbParamSys.h>
 
 /*-----------------------------------------+
 |  TYPEDEFS                                |
@@ -88,19 +90,7 @@ static char* fslimx6_smbIdent( void );
 static u_int32 fslimx6_smbExit( SMB_HANDLE  **smbHdlP );
 static int32 fslimx6_i2cXfer( SMB_HANDLE *smbHdl, struct I2CMESSAGE msg[], u_int32 num );
 
-static void delay( SMB_HANDLE  *smbHdl )
-{
-	if( smbHdl->mikroDelay )
-		OSS_MikroDelay( OSSH, 1 );
-	else
-		OSS_Delay( OSSH, 1 );
-
-}/*delay*/
-
-
-/* Write Len bytes pointed to by *Data to the device with address
-   Addr.
-*/
+/* Write Len bytes pointed to by *Data to the device with address Addr. */
 static int fslimx6_i2cWrite
 (
 	SMB_HANDLE  *smbHdl,
@@ -111,12 +101,12 @@ static int fslimx6_i2cWrite
 )
 {
 	int error = SMB_ERR_NO;
-	
+
 	DBGWRT_1((DBH,"%s addr %02x len %d restart %d\n", __FUNCTION__, Addr, Len, Restart ));
 
 	if( !Restart )
 		fslI2cStart(smbHdl->busCtrlId);
-	else 
+	else
 		fslI2cRestart(smbHdl->busCtrlId);
 
 	/* Output Address (R/W = 0) */
@@ -127,7 +117,7 @@ static int fslimx6_i2cWrite
 		fslI2cByteWrite(smbHdl->busCtrlId, *Data++);
 	}/*while*/
 
-CLEANUP:
+
 	return error;
 }/* fslimx6_i2cWrite */
 
@@ -145,13 +135,13 @@ static int fslimx6_i2cRead
 )
 {
 	int error = SMB_ERR_NO;
-	volatile u_int32 dummy;
+
 
 	DBGWRT_1((DBH,"%s addr %02x len %d restart %d\n", __FUNCTION__, Addr, Len, Restart ));
 
 	if( !Restart )
 		fslI2cStart(smbHdl->busCtrlId);
-	else 
+	else
 		fslI2cRestart(smbHdl->busCtrlId);
 
 	/* Output Address (R/W = 1) */
@@ -162,8 +152,8 @@ static int fslimx6_i2cRead
 		fslI2cByteRead(smbHdl->busCtrlId, Data++);
 		Len--;					/* Decrement count */
 	}/*while*/
-	
-CLEANUP:
+
+
 	return error;
 }/* fslimx6_i2cRead */
 
@@ -257,7 +247,7 @@ u_int32 SMB_FSLIMX6_Init
     OSS_MemFill( osHdl, gotSize, (char*)smbHdl, 0 );
 
     DBGINIT((NULL,&smbHdl->smbComHdl.dbgHdl));
-    
+
     smbHdl->busCtrlId 		= vxbInstByNameFind("fslI2c", desc->unit);
     smbHdl->smbComHdl.dbgLevel		= desc->dbgLevel;
     smbHdl->timeOut		  	= desc->timeOut;
@@ -314,7 +304,7 @@ static u_int32 fslimx6_smbExit
 
     fslI2cStop(smbHdl->busCtrlId);
     fslI2cRelease(smbHdl->busCtrlId);
-    
+
 	/* deinitialize common interface */
 	if(smbHdl->smbComHdl.ExitCom)
 		smbHdl->smbComHdl.ExitCom(smbHdl);
@@ -351,7 +341,7 @@ static int32 fslimx6_i2cXfer
 	int32 error = SMB_ERR_NO;
 
 	DBGWRT_1((DBH,">>> %s: smbHdl %08p\n", __FUNCTION__, smbHdl ));
-	
+
 	for( i = 0; i < num; i++ ) {
 		pmsg = &msg[i];
 		DBGWRT_3((DBH,"Doing %s %d bytes to 0x%02x - %d of %d messages\n",
@@ -359,7 +349,7 @@ static int32 fslimx6_i2cXfer
 				 pmsg->len, pmsg->addr, i + 1, num));
 
 		if( pmsg->flags & I2C_M_RD )
-		{		
+		{
 			error = fslimx6_i2cRead(smbHdl, pmsg->addr, pmsg->buf, pmsg->len, i);
 			if( error )
 			{
@@ -381,8 +371,7 @@ static int32 fslimx6_i2cXfer
 	/* STOP */
 	fslI2cStop(smbHdl->busCtrlId);
 	fslI2cRelease(smbHdl->busCtrlId);
-	
-CLEANUP:
+
 	DBGWRT_1((DBH,"<<< %s: smbHdl %08p error %08x\n", __FUNCTION__, smbHdl, error ));
 	return error;
 } /* fslimx6_i2cXfer */
