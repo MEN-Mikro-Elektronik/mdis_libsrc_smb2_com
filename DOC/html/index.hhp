@@ -17,16 +17,17 @@ files.html
 smb2_8h-source.html
 smb2_8h.html
 smb2__com_8c.html
+smb2__fch_8c.html
 smb2__ich_8c.html
 smb2__sch_8c.html
 annotated.html
 functions.html
-functions_func.html
-functions_vars.html
 structI2CMESSAGE.html
 structSMB__ALERT__NODE.html
 structSMB__COM__HANDLE.html
 structSMB__DESC__ALI1543.html
+structSMB__DESC__FCH.html
+structSMB__DESC__FSLIMX6.html
 structSMB__DESC__ICH.html
 structSMB__DESC__MENZ001.html
 structSMB__DESC__MGT5200.html
@@ -40,7 +41,4 @@ group____SMB2__ERR.html
 group____SMB2__FLAG.html
 modules.html
 globals.html
-globals_func.html
-globals_type.html
-globals_defs.html
 pages.html

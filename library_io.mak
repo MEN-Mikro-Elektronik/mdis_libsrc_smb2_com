@@ -40,9 +40,11 @@ MAK_INP1=smb2_com$(INP_SUFFIX)
 MAK_INP2=smb2_ich$(INP_SUFFIX)
 MAK_INP3=smb2_sch$(INP_SUFFIX)
 MAK_INP4=smb2_menz001$(INP_SUFFIX)
+MAK_INP5=smb2_fch$(INP_SUFFIX)
 
 MAK_INP=$(MAK_INP1)\
 		$(MAK_INP2) \
 		$(MAK_INP3) \
-		$(MAK_INP4)
+		$(MAK_INP4) \
+		$(MAK_INP5)
 

@@ -1,85 +1,24 @@
 /*********************  P r o g r a m  -  M o d u l e ***********************/
 /*!
- *         \file  smb2_ich.c
+ *         \file  smb2_fch.c
  *      \project  SMB2 library
  *
- *       Author  sv
- *        $Date: 2013/07/15 18:05:34 $
- *    $Revision: 1.16 $
+ *       Author  dieter.pfeuffer@men.de
+ *        $Date: $
+ *    $Revision: $
  *
- *      \brief  system managment bus driver for the ICH
- *				SMB controller
+ *      \brief  FCH SMB controller support
  *
  *     Required: -
  *     \switches: MAC_IO_MAPPED
  *
  *-------------------------------[ History ]---------------------------------
  *
- * $Log: smb2_ich.c,v $
- * Revision 1.16  2013/07/15 18:05:34  channoyer
- * R: Not easy to build the BSP from IDE
- * M: Update MEN specific files accordingly
- *
- * Revision 1.15  2012/12/17 14:24:01  dpfeuffer
- * R: block r/w and PEC support requested from customer (for F18E)
- * M: block r/w and PEC support implemented
- *
- * Revision 1.14  2012/02/17 08:18:01  dpfeuffer
- * R: AMD FCH SMB controller support
- * M: LocWaitBusyReady(): delay added for FCH
- *
- * Revision 1.13  2010/06/11 09:04:37  ufranke
- * R: sometimes wasting time during transfer
- * M: LocWaitBusyReady() fixed
- *
- * Revision 1.12  2009/03/17 14:45:03  dpfeuffer
- * R: doxygen warning
- * M: cosmetics
- *
- * Revision 1.11  2009/03/17 13:59:28  dpfeuffer
- * R: compiler warnings wit VC2008 64bit compiler
- * M: debug prints with pointers changed to %p
- *
- * Revision 1.10  2007/10/09 09:34:01  SVogel
- * added busyWait initialization
- *
- * Revision 1.9  2007/07/19 15:13:55  DPfeuffer
- * cast for Windows compiler was necessary because MACCESS modification
- *
- * Revision 1.8  2007/02/20 15:10:29  DPfeuffer
- * - undo: changed interface of *_Init() and *_Exit functions
- *         (VxW6.3 must consider this by disabling strict aliasing)
- *
- * Revision 1.7  2006/11/15 08:07:58  svogel
- * adaptions due to interface change of common library
- * added
- * -----
- * + smb quick command support
- *
- * Revision 1.6  2006/02/27 15:26:48  DPfeuffer
- * SMB_ICH_Init(): alertPollFreq parameter passing added
- *
- * Revision 1.5  2006/02/22 16:02:06  DPfeuffer
- * LocSmbXfer(): SMB_ACC_BYTE_DATA, SMB_ACC_WORD_DATA fixed
- *
- * Revision 1.4  2006/02/10 15:44:12  SVogel
- * bugfix in SMB_ICH_init
- *
- * Revision 1.3  2005/11/28 09:35:27  SVogel
- * Added doxygen documentation.
- *
- * Revision 1.2  2005/11/24 14:45:23  SVogel
- * Removed define OSSH.
- *
- * Revision 1.1  2005/11/24 10:15:12  SVogel
- * Initial Revision
- *
- *
- *
+ * $Log: smb2_fch.c,v $
  *---------------------------------------------------------------------------
-  *  (c) Copyright 2005 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
+  *  (c) Copyright 2016 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
  ****************************************************************************/
-/*#define DBG*/
+
 #include <MEN/men_typs.h>
 #include <MEN/oss.h>
 #include <MEN/dbg.h>
@@ -215,7 +154,7 @@ typedef struct
 #define SMBALERT_DIS                0x04
 /* end of SMBus I/O Register Address Map */
 
-#define WAIT_BUSY_TIME              8000
+#define WAIT_BUSY_TIME              500
 #define WRITE_ENABLE                0x00
 #define READ_ENABLE                 0x01
 
@@ -243,7 +182,7 @@ static int32 LocSmbXfer( SMB_HANDLE *smbHdl, u_int32 flags, u_int16 addr,
 						 u_int8 read_write, u_int8 cmdAddr,
 						 u_int8 size, u_int8 *dataP );
 
-/*******************************  LocSmbIdent  *************************
+/*******************************  LocSmbIdent  *******************************
  *
  *  Description:  Returns the identification string of the module.
  *
@@ -256,10 +195,10 @@ static int32 LocSmbXfer( SMB_HANDLE *smbHdl, u_int32 flags, u_int16 addr,
  ****************************************************************************/
 static char *LocSmbIdent( void )
 {
-    return( "ICH SMB - SMB2 library: $Id: smb2_ich.c,v 1.16 2013/07/15 18:05:34 channoyer Exp $" );
+    return( "FCH SMB - SMB2 library: $Id: smb2_fch.c,v 1.1 2016/04/06 12:00:00 dpfeuffer Exp $" );
 }/*LocSmbIdent*/
 
-/*******************************  LocWaitBusyReady  *****************************/
+/*******************************  LocWaitBusyReady  *************************/
 /** Waits to BUSY first and then leaving BUSY and bus idle.
  *				  Returns imediatly if DEV_ERR detected.
  *
@@ -273,84 +212,88 @@ static int32 LocWaitBusyReady( SMB_HANDLE *smbHdl, u_int32 flags )
 {
     u_int32 i=0;
     u_int8 status=0;
+	int32 result = SMB_ERR_NO;
 	void* baseAddr = (void*)smbHdl->baseAddr;
+	DBGCMD(static const char functionName[] = "SMB2_FCH - LocWaitBusyReady:"; )
 
-	/* wait for busy */
-    for( i=0; i<WAIT_BUSY_TIME; i++ )
-	{
-		status = MREAD_D8(baseAddr, SMB_HST_STS);
-		
-		if( status & DEV_ERR )
-		{
-			/* Parity Error Correction enabled ? */
-			if( flags & SMB_FLAG_PEC )
-			{
-				/* check for PEC error (and clear it) */
-				if( MREAD_D8(baseAddr, SMB_AUX_STS) & CRC_ERROR )
-				{
-					MWRITE_D8(baseAddr, SMB_AUX_STS, CRC_ERROR);
-					DBGWRT_ERR((DBH, "*** LocWaitBusyReady: PEC error\n"));
-					return( SMB_ERR_PEC );
-				}
-			}
-			return( SMB_ERR_ADDR );
-	    }
-		
-		if( status & BUS_ERR )
-		{
-			return( SMB_ERR_COLL );
-	    }
-		
-		if( status & HOST_BUSY )
-		{
-			/*DBGWRT_1((DBH,"%s: line %d   - i %d - status %02x\n", __FUNCTION__, __LINE__, i, status ));*/
-			break;
-	    }
+	DBGWRT_1((DBH, "%s: smbHdl=%08p\n", functionName, smbHdl));
+
+
+	/* Make sure the SMBus host is ready to start transmitting */
+	
+	if ((status = MREAD_D8(baseAddr, SMB_HST_STS)) != 0x00) {
+
+		DBGWRT_4((DBH, " SMBus busy (%02x). Resetting...\n", status));
+		MWRITE_D8(smbHdl->baseAddr, SMB_HST_STS, status);
+
+		if ((status = MREAD_D8(baseAddr, SMB_HST_STS)) != 0x00) {
+			DBGWRT_ERR((DBH, "*** %s: Failed! (%02x)\n", functionName, status));
+			return(SMB_ERR_BUSY);
+		}
+		else {
+			DBGWRT_4((DBH, "Successful!\n"));
+		}
 	}
 
-	/*DBGWRT_1((DBH,"%s: line %d   - i %d\n", __FUNCTION__, __LINE__, i ));*/
+	/* start the transaction by setting bit 6 */
+	MSETMASK_D8(baseAddr, SMB_HST_CNT, START);
 
-	/* wait for !busy && INTR */
-    for( i=0; i<WAIT_BUSY_TIME; i++ )
-	{
-		status = MREAD_D8(baseAddr, SMB_HST_STS);
-		
-		if( status & DEV_ERR )
-		{
-			/* Parity Error Correction enabled ? */
-			if( flags & SMB_FLAG_PEC )
-			{
-				/* check for PEC error (and clear it) */
-				if( MREAD_D8(baseAddr, SMB_AUX_STS) & CRC_ERROR )
-				{
-					MWRITE_D8(baseAddr, SMB_AUX_STS, CRC_ERROR);
-					DBGWRT_ERR((DBH, "*** LocWaitBusyReady: PEC error\n"));
-					return( SMB_ERR_PEC );
-				}
-			}
+	/* We will always wait for a fraction of a second! (See PIIX4 docs errata) */
+	// OSS_Delay(smbHdl->smbComHdl.osHdl, 2); /* Extra delay for SERVERWORKS_CSB5 */
+	OSS_Delay(smbHdl->smbComHdl.osHdl, 1);
 
-			return( SMB_ERR_ADDR );
-		}
-		
-		if( status & BUS_ERR )
-		{
-			return( SMB_ERR_COLL );
-		}
+	while( (++i < WAIT_BUSY_TIME) &&
+		   ((status = MREAD_D8(baseAddr, SMB_HST_STS)) & HOST_BUSY) )
+		OSS_Delay(smbHdl->smbComHdl.osHdl, 1);
 
-		/*DBGWRT_1((DBH,"%s: line %d   - i %d - status %02x\n", __FUNCTION__, __LINE__, i, status ));*/
-		
-		if( !(status & HOST_BUSY) /* busy is gone */
-			&& ( status & INTR )  /* intr say complete */
-		  )
-		{		    
-			/*DBGWRT_1((DBH,"%s: line %d   - i %d - status %02x\n", __FUNCTION__, __LINE__, i, status ));*/
-			return( SMB_ERR_NO );
-		}		
+	/* If the SMBus is still busy, we give up */
+	if (i == WAIT_BUSY_TIME) {
+		DBGWRT_ERR((DBH, "*** %s: SMBus Timeout!\n", functionName));
+		result = SMB_ERR_BUSY;
 	}
-	return( SMB_ERR_BUSY );	
+
+	if (status & FAILED) {
+		result = SMB_ERR_GENERAL;
+		DBGWRT_ERR((DBH, "*** %s: Error: Failed bus transaction\n", functionName));
+	}
+
+	if (status & BUS_ERR) {
+		result = SMB_ERR_COLL;
+		DBGWRT_ERR((DBH, "*** %s: Bus collision! SMBus may be "
+			"locked until next hard reset. (sorry!)\n", functionName));
+		/* Clock stops and slave is stuck in mid-transmission */
+	}
+
+	if (status & DEV_ERR) {
+
+		/* Parity Error Correction enabled ? */
+		if (flags & SMB_FLAG_PEC)
+		{
+			/* check for PEC error (and clear it) */
+			if (MREAD_D8(baseAddr, SMB_AUX_STS) & CRC_ERROR)
+			{
+				MWRITE_D8(baseAddr, SMB_AUX_STS, CRC_ERROR);
+				DBGWRT_ERR((DBH, "*** %s: PEC error\n", functionName));
+				return(SMB_ERR_PEC);
+			}
+		}
+		DBGWRT_ERR((DBH, "*** %s: Error: no response!\n", functionName));
+		result = SMB_ERR_ADDR;
+	}
+
+	if ((status = MREAD_D8(baseAddr, SMB_HST_STS)) != 0x00)
+		MWRITE_D8(smbHdl->baseAddr, SMB_HST_STS, status);
+
+	if ((status = MREAD_D8(baseAddr, SMB_HST_STS)) != 0x00){
+		DBGWRT_ERR((DBH, "*** %s: Failed reset at end of "
+			"transaction (%02x)\n", functionName, status));
+	}
+
+	return result;
+
 }/* LocWaitBusyReady */
 
- /*******************************  LocSmbExit  *****************************/
+/*******************************  LocSmbExit  *******************************/
 /** Deinitializes this library and SMB controller.
  *
  * \param smbHdlP	\INOUT  pointer to variable where the handle is stored,
@@ -366,8 +309,12 @@ static int32 LocSmbExit
 	int32 error  = 0;
 	SMB_HANDLE  *smbHdl;
 
+	DBGCMD(static const char functionName[] = "SMB2_FCH - LocSmbExit:"; )
+
 	smbHdl = *smbHdlP;
 	*smbHdlP = NULL;
+
+	DBGWRT_1((DBH, "%s: smbHdl=%08p\n", functionName, smbHdl));
 
 	/* deinitialize common interface */
 	if(smbHdl->smbComHdl.ExitCom)
@@ -383,7 +330,7 @@ static int32 LocSmbExit
 	return( error );
 }/* LocSmbExit */
 
- /******************************** LocSmbXfer *****************************/
+/******************************** LocSmbXfer ********************************/
 /** Read/Write data from a device using the SMBus protocol
  *
  *  \param   smbHdl     valid SMB handle
@@ -413,14 +360,14 @@ static int32 LocSmbXfer
 	u_int8 len = 0;
 	u_int32 error = SMB_ERR_NO, i;
 	u_int16 *wDataP = (u_int16*)dataP;
-	DBGCMD(	static const char functionName[] = "SMB2_ICH - LocSmbXfer:"; )
+	DBGCMD(	static const char functionName[] = "SMB2_FCH - LocSmbXfer:"; )
 
 	if(	addr & READ_ENABLE )
     {
     	return( SMB_ERR_ADDR );
     }
 
-    DBGWRT_1( (DBH, "%s: smbHdl = %08p\n", functionName, smbHdl) );
+    DBGWRT_1( (DBH, "%s: smbHdl=%08p\n", functionName, smbHdl) );
 
 	/* check for PEC error (and clear it) */
 	if( MREAD_D8(smbHdl->baseAddr, SMB_AUX_STS) & CRC_ERROR )
@@ -439,13 +386,13 @@ static int32 LocSmbXfer
 	    status = MREAD_D8(smbHdl->baseAddr, SMB_HST_STS);	    
 	}	    
 
-    MWRITE_D8(smbHdl->baseAddr, SMB_XMIT_SLVA, addr | read_write);
+    MWRITE_D8(smbHdl->baseAddr, SMB_XMIT_SLVA, addr | read_write);//dpok
        
 	switch(size)
 	{
 		case SMB_ACC_QUICK:		    
-		    DBGWRT_2( (DBH, "%s SMB_ACC_QUICK\n", functionName) );
-			size = QUICK + START;
+		    DBGWRT_2( (DBH, " SMB_ACC_QUICK\n") );
+			size = QUICK;
 
 			/* PEC for quick command not possible */
 			if( flags & SMB_FLAG_PEC )
@@ -458,11 +405,11 @@ static int32 LocSmbXfer
             {
                 MWRITE_D8(smbHdl->baseAddr, SMB_HST_CMD, cmdAddr);
             }	    
-		    size = BYTE + START;
+		    size = BYTE;
 		    break;
 		    
 		case SMB_ACC_BYTE_DATA:
-		    DBGWRT_2( (DBH, "%s SMB_ACC_BYTE_DATA\n", functionName) );		    
+		    DBGWRT_2( (DBH, " SMB_ACC_BYTE_DATA\n") );		    
 		    MWRITE_D8(smbHdl->baseAddr, SMB_HST_CMD, cmdAddr);
 		    
 		   	if( read_write == SMB_WRITE )
@@ -470,11 +417,11 @@ static int32 LocSmbXfer
                 MWRITE_D8(smbHdl->baseAddr, SMB_HST_D0, *dataP);
             }
 
-		   	size = BYTE_DATA + START;
+		   	size = BYTE_DATA;
 			break;
 
 		case SMB_ACC_WORD_DATA:
-		    DBGWRT_2( (DBH, "%s SMB_ACC_WORD_DATA\n", functionName) );
+		    DBGWRT_2( (DBH, " SMB_ACC_WORD_DATA\n") );
 		    MWRITE_D8(smbHdl->baseAddr, SMB_HST_CMD, cmdAddr);
             
             if( read_write == SMB_WRITE )
@@ -483,12 +430,12 @@ static int32 LocSmbXfer
 				MWRITE_D8(smbHdl->baseAddr, SMB_HST_D1, *(dataP+1));  
             }
 
-            size = WORD_DATA + START;
+            size = WORD_DATA;
 			break;
 
 		case SMB_ACC_BLOCK_DATA:
-			DBGWRT_2( (DBH, "%s SMB_ACC_BLOCK_DATA cmd: 0x%02x len: 0x%02x\n",
-							functionName, cmdAddr, dataP[0] ) );
+			DBGWRT_2( (DBH, " SMB_ACC_BLOCK_DATA cmd: 0x%02x len: 0x%02x\n",
+							cmdAddr, dataP[0] ) );
 		    MWRITE_D8(smbHdl->baseAddr, SMB_HST_CMD, cmdAddr);
 
 			if (read_write == SMB_WRITE) {
@@ -510,7 +457,7 @@ static int32 LocSmbXfer
 					MWRITE_D8(smbHdl->baseAddr, SMB_HOST_BLOCK_DB, dataP[i]);
 			}
 
-			size = BLOCK + START;
+			size = BLOCK;
 			break;
 
 		default:
@@ -522,16 +469,17 @@ static int32 LocSmbXfer
     if( flags & SMB_FLAG_PEC ){
 		/* enable automatic CRC apposition */
 		MSETMASK_D8(smbHdl->baseAddr, SMB_AUX_CTL, AUTO_APPEND_CRC);
-	    DBGWRT_2( (DBH, "%s set AUTO_APPEND_CRC for PEC\n", functionName) );
+	    DBGWRT_2( (DBH, " set AUTO_APPEND_CRC for PEC\n") );
     }
 	else{
 		/* disable automatic CRC apposition */
 		MCLRMASK_D8(smbHdl->baseAddr, SMB_AUX_CTL, AUTO_APPEND_CRC);
 	}
 
+	//dp size += START;
 	MWRITE_D8(smbHdl->baseAddr, SMB_HST_CNT, size);
 
-	MWRITE_D8(smbHdl->baseAddr,SMB_HST_STS, (char)SMB_CLEAR_STATUS);
+	//MWRITE_D8(smbHdl->baseAddr,SMB_HST_STS, (char)SMB_CLEAR_STATUS);
 	
 	if( (error = LocWaitBusyReady( smbHdl, flags ) ))
 	{   	    	    
@@ -539,7 +487,7 @@ static int32 LocSmbXfer
 	}
 		
 	/* initialize and perform a read opereation */	
-	size &= ~START;
+	//size &= ~START;
 
 	if(	read_write == SMB_READ )
     {           
@@ -548,15 +496,13 @@ static int32 LocSmbXfer
 	        case BYTE:
 	        case BYTE_DATA:
 	            *dataP = MREAD_D8(smbHdl->baseAddr, SMB_HST_D0);
-	            DBGWRT_3( (DBH, "%s BYTE(_DATA) data=%04x\n",
-				 	   functionName, *dataP) );
+	            DBGWRT_3( (DBH, " BYTE(_DATA) data=%04x\n", *dataP) );
 	            break;
 	            
 	        case WORD_DATA:
 	            *wDataP = MREAD_D8(smbHdl->baseAddr, SMB_HST_D0) +
                          (MREAD_D8(smbHdl->baseAddr, SMB_HST_D1) << 8);
-                DBGWRT_3( (DBH, "%s WORD_DATA data=%04x\n",
-				 	   functionName, *wDataP) );
+                DBGWRT_3( (DBH, " WORD_DATA data=%04x\n", *wDataP) );
 	            break;
 
 		case BLOCK:
@@ -572,8 +518,8 @@ static int32 LocSmbXfer
 			/* get the data */
 			for (i = 1; i <= len; i++) {
 				dataP[i] = MREAD_D8(smbHdl->baseAddr, SMB_HOST_BLOCK_DB);
-				DBGWRT_3( (DBH, "%s BLOCK_DATA len=%d, i=%d, data=%02x\n",
-					 	   functionName, len, i, dataP[i]) );
+				DBGWRT_3( (DBH, " BLOCK_DATA len=%d, i=%d, data=%02x\n",
+					 	   len, i, dataP[i]) );
 			}
 
 			break;
@@ -589,7 +535,7 @@ ERR_EXIT:
     return( error );
 }/* LocSmbXfer */
 
- /***************************** SMB_ICH_Init ****************************/
+/***************************** SMB_FCH_Init *********************************/
 /** Initializes this library and check's the SMB host.
  *
  * \param  descP    \IN  descriptor
@@ -600,19 +546,19 @@ ERR_EXIT:
  *
  ****************************************************************************/
 #ifdef MAC_IO_MAPPED 
-    u_int32 SMB_ICH_IO_Init 
+    u_int32 SMB_FCH_IO_Init 
  #else 
-    u_int32 SMB_ICH_Init
+    u_int32 SMB_FCH_Init
  #endif
- ( SMB_DESC_ICH	*descP, OSS_HANDLE		*osHdl, void			**smbHdlP ) 
+ ( SMB_DESC_FCH	*descP, OSS_HANDLE		*osHdl, void			**smbHdlP ) 
  { 
     u_int32     error  = 0; 
     SMB_HANDLE  *smbHdl = NULL; 
     u_int32		gotSize = 0;
 #ifdef MAC_IO_MAPPED    
-	DBGCMD(	static const char functionName[] = "SMB2 - SMB_ICH_IO_Init:"; )
+	DBGCMD(	static const char functionName[] = "SMB2 - SMB_FCH_IO_Init:"; )
 #else
-    DBGCMD(	static const char functionName[] = "SMB2 - SMB_ICH_Init:"; )
+    DBGCMD(	static const char functionName[] = "SMB2 - SMB_FCH_Init:"; )
 #endif
 			
 	smbHdl   = (SMB_HANDLE*) OSS_MemGet( osHdl, sizeof(SMB_HANDLE), &gotSize );
@@ -675,8 +621,4 @@ ERR_EXIT:
 
 CLEANUP:
 	return( error );
-}/* SMB_ICH_Init */
-
-
-
-
+}/* SMB_FCH_Init */
