@@ -326,7 +326,7 @@ u_int32 SMB_COM_Init
 								functionName, error) );
 					goto ERR_EXIT;
 				}
-		
+
 				if( (error = OSS_AlarmSet( OSSH,
 										   smbComHdl->alarmHdl,
 		    							   (u_int32)smbComHdl->alertPollFreq,
@@ -379,7 +379,7 @@ static u_int32 smbComExit
 	 * (e.g. from a thread running at a different CPU core)
 	 */
 	error = OSS_SemWait( OSSH, smbComHdl->hostCtrlSem, smbComHdl->busyWait );
-	switch( error ){	
+	switch( error ){
 	case ERR_SUCCESS:
 		/* just release the gotten semaphore */
 		OSS_SemSignal(OSSH, smbComHdl->hostCtrlSem);
@@ -406,8 +406,10 @@ static u_int32 smbComExit
 #ifndef SMB_NO_ALERT
 	{
 		SMB_ALERT_NODE* remNode;
-		while( (remNode = (SMB_ALERT_NODE*)OSS_DL_RemHead(&smbComHdl->smbAlertCb)) )
+		while( (remNode = (SMB_ALERT_NODE*)OSS_DL_RemHead(&smbComHdl->smbAlertCb)) ) {
 			OSS_MemFree(OSSH, (u_int8*)remNode, remNode->gotsize);
+			remNode = NULL;
+		}
 	}
 #endif /*SMB_NO_ALERT*/
 
@@ -1430,6 +1432,7 @@ static int32 cmbComAlertCbRemove
 			OSS_DL_Remove( (OSS_DL_NODE*)curNode );
 			*cbArgP = curNode->alertCbArg;
 			OSS_MemFree( OSSH, (u_int8*)curNode, curNode->gotsize );
+			curNode = NULL;
 			goto ERR_EXIT;
 		}
 	}

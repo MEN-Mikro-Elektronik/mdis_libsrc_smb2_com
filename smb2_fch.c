@@ -34,7 +34,7 @@
 /** structure for SMB_HANDLE */
 typedef struct
 {
-	SMB_ENTRIES entries; 		/**< function entries */	
+	SMB_ENTRIES entries; 		/**< function entries */
 	SMB_COM_HANDLE smbComHdl; 	/**< Common handle entries */
 
 	u_int32    ownSize;			/**< size of memory allocated for this handle */
@@ -50,18 +50,18 @@ typedef struct
                                           * register SMB_HST_STS (default: 0x00) */
 #define SMB_HST_CNT                 0x02 /* host control
                                           * register SMB_HST_CNT (default: 0x00) */
-#define SMB_HST_CMD                 0x03 /* host command 
+#define SMB_HST_CMD                 0x03 /* host command
                                           * register SMB_HST_CMD (default: 0x00)
                                           * host status command register bit 0..7 */
 #define SMB_XMIT_SLVA               0x04 /* transmitt slave address
-                                          * register SMB_XMIT_SLVA (default: 0x00) 
+                                          * register SMB_XMIT_SLVA (default: 0x00)
                                           * transmitt slave register bit 7..1 address, bit 0 0=write, 1=read */
 #define SMB_HST_D0                  0x05 /* host data 0
                                           * register SMB_HST_D0 (default: 0x00)
                                           * host data0 register for block write commands */
 #define SMB_HST_D1                  0x06 /* host data 1
-                                          * register SMB_HST_D1 (default: 0x00) 
-                                          * host data1 register for, used during execution of any command */ 
+                                          * register SMB_HST_D1 (default: 0x00)
+                                          * host data1 register for, used during execution of any command */
 #define SMB_HOST_BLOCK_DB           0x07 /* host block data byte
                                           * register SMB_HOST_BLOCK_DB (default: 0x00)
                                           * host block data byte register */
@@ -84,8 +84,8 @@ typedef struct
 #define SMB_SMLINK_PIN_CTL          0x0E /* SMLink pin control
                                           * register SMB_SMLINK_PIN_CTL (default: 0x04) */
 #define SMB_SMBUS_PIN_CTL           0x0F /* SMBus pin control
-                                          * register SMB_SMBUS_PIN_CTL (default: 0x00) */ 
-#define SMB_SLV_STS                 0x10 /* slave status 
+                                          * register SMB_SMBUS_PIN_CTL (default: 0x00) */
+#define SMB_SLV_STS                 0x10 /* slave status
                                           * register SMB_SLV_STS (default: 0x00) */
 #define SMB_SLV_CMD                 0x11 /* slave command
                                           * register SMB_SLV_CMD (default: 0x00) */
@@ -95,7 +95,7 @@ typedef struct
 #define SMB_NOTIFY_DLOW             0x16 /* notify data low byte
                                           * register SMB_NOTIFY_DLOW (default: 0x00)
                                           *   notify data low byte register */
-#define SMB_NOTIFY_DHIGH            0x17 /* notify data high byte 
+#define SMB_NOTIFY_DHIGH            0x17 /* notify data high byte
                                           * register SMB_NOTIFY_DHIGH   (default: 0x00)
                                           * notify data high byte register */
 
@@ -220,7 +220,7 @@ static int32 LocWaitBusyReady( SMB_HANDLE *smbHdl, u_int32 flags )
 
 
 	/* Make sure the SMBus host is ready to start transmitting */
-	
+
 	if ((status = MREAD_D8(baseAddr, SMB_HST_STS)) != 0x00) {
 
 		DBGWRT_4((DBH, " SMBus busy (%02x). Resetting...\n", status));
@@ -323,9 +323,10 @@ static int32 LocSmbExit
     }
 
 	/* clear status first */
-	MWRITE_D8(smbHdl->baseAddr,SMB_HST_STS, SMB_CLEAR_STATUS);	
+	MWRITE_D8(smbHdl->baseAddr,SMB_HST_STS, SMB_CLEAR_STATUS);
 
     OSS_MemFree( smbHdl->smbComHdl.osHdl, smbHdl, smbHdl->ownSize );
+    smbHdl = NULL;
 
 	return( error );
 }/* LocSmbExit */
@@ -376,21 +377,21 @@ static int32 LocSmbXfer
 	}
 
 	/* clear and check status first */
-	MWRITE_D8(smbHdl->baseAddr,SMB_HST_STS, SMB_CLEAR_STATUS);	
+	MWRITE_D8(smbHdl->baseAddr,SMB_HST_STS, SMB_CLEAR_STATUS);
 	status = MREAD_D8(smbHdl->baseAddr, SMB_HST_STS);
 
 	if( !(status & BYTE_DONE_STATUS) ||
     	 (status & (DEV_ERR | BUS_ERR | HOST_BUSY)) )
 	{
 		MWRITE_D8(smbHdl->baseAddr,SMB_HST_STS, SMB_CLEAR_STATUS);
-	    status = MREAD_D8(smbHdl->baseAddr, SMB_HST_STS);	    
-	}	    
+	    status = MREAD_D8(smbHdl->baseAddr, SMB_HST_STS);
+	}
 
     MWRITE_D8(smbHdl->baseAddr, SMB_XMIT_SLVA, addr | read_write);//dpok
-       
+
 	switch(size)
 	{
-		case SMB_ACC_QUICK:		    
+		case SMB_ACC_QUICK:
 		    DBGWRT_2( (DBH, " SMB_ACC_QUICK\n") );
 			size = QUICK;
 
@@ -400,18 +401,18 @@ static int32 LocSmbXfer
 
 			break;
 
-		case SMB_ACC_BYTE:	
+		case SMB_ACC_BYTE:
 		    if( read_write == SMB_WRITE )
             {
                 MWRITE_D8(smbHdl->baseAddr, SMB_HST_CMD, cmdAddr);
-            }	    
+            }
 		    size = BYTE;
 		    break;
-		    
+
 		case SMB_ACC_BYTE_DATA:
-		    DBGWRT_2( (DBH, " SMB_ACC_BYTE_DATA\n") );		    
+		    DBGWRT_2( (DBH, " SMB_ACC_BYTE_DATA\n") );
 		    MWRITE_D8(smbHdl->baseAddr, SMB_HST_CMD, cmdAddr);
-		    
+
 		   	if( read_write == SMB_WRITE )
             {
                 MWRITE_D8(smbHdl->baseAddr, SMB_HST_D0, *dataP);
@@ -423,11 +424,11 @@ static int32 LocSmbXfer
 		case SMB_ACC_WORD_DATA:
 		    DBGWRT_2( (DBH, " SMB_ACC_WORD_DATA\n") );
 		    MWRITE_D8(smbHdl->baseAddr, SMB_HST_CMD, cmdAddr);
-            
+
             if( read_write == SMB_WRITE )
-            {                
+            {
                 MWRITE_D8(smbHdl->baseAddr, SMB_HST_D0, *dataP);
-				MWRITE_D8(smbHdl->baseAddr, SMB_HST_D1, *(dataP+1));  
+				MWRITE_D8(smbHdl->baseAddr, SMB_HST_D1, *(dataP+1));
             }
 
             size = WORD_DATA;
@@ -439,7 +440,7 @@ static int32 LocSmbXfer
 		    MWRITE_D8(smbHdl->baseAddr, SMB_HST_CMD, cmdAddr);
 
 			if (read_write == SMB_WRITE) {
-				
+
 				len = dataP[0];
 				if (len > SMB_BLOCK_MAX_BYTES) {
 					len = SMB_BLOCK_MAX_BYTES;
@@ -480,17 +481,17 @@ static int32 LocSmbXfer
 	MWRITE_D8(smbHdl->baseAddr, SMB_HST_CNT, size);
 
 	//MWRITE_D8(smbHdl->baseAddr,SMB_HST_STS, (char)SMB_CLEAR_STATUS);
-	
+
 	if( (error = LocWaitBusyReady( smbHdl, flags ) ))
-	{   	    	    
+	{
 	    goto ERR_EXIT;
 	}
-		
-	/* initialize and perform a read opereation */	
+
+	/* initialize and perform a read opereation */
 	//size &= ~START;
 
 	if(	read_write == SMB_READ )
-    {           
+    {
 	    switch( size )
 	    {
 	        case BYTE:
@@ -498,7 +499,7 @@ static int32 LocSmbXfer
 	            *dataP = MREAD_D8(smbHdl->baseAddr, SMB_HST_D0);
 	            DBGWRT_3( (DBH, " BYTE(_DATA) data=%04x\n", *dataP) );
 	            break;
-	            
+
 	        case WORD_DATA:
 	            *wDataP = MREAD_D8(smbHdl->baseAddr, SMB_HST_D0) +
                          (MREAD_D8(smbHdl->baseAddr, SMB_HST_D1) << 8);
@@ -507,7 +508,7 @@ static int32 LocSmbXfer
 
 		case BLOCK:
 			/* get length of block */
-			len = MREAD_D8(smbHdl->baseAddr, SMB_HST_D0); 
+			len = MREAD_D8(smbHdl->baseAddr, SMB_HST_D0);
 			if( len > SMB_BLOCK_MAX_BYTES )
 				len = SMB_BLOCK_MAX_BYTES;
 			dataP[0] = len;
@@ -530,7 +531,7 @@ static int32 LocSmbXfer
 	            break;
 	    }
     }
-    
+
 ERR_EXIT:
     return( error );
 }/* LocSmbXfer */
@@ -545,22 +546,22 @@ ERR_EXIT:
  *  \return    0 | error code
  *
  ****************************************************************************/
-#ifdef MAC_IO_MAPPED 
-    u_int32 SMB_FCH_IO_Init 
- #else 
+#ifdef MAC_IO_MAPPED
+    u_int32 SMB_FCH_IO_Init
+ #else
     u_int32 SMB_FCH_Init
  #endif
- ( SMB_DESC_FCH	*descP, OSS_HANDLE		*osHdl, void			**smbHdlP ) 
- { 
-    u_int32     error  = 0; 
-    SMB_HANDLE  *smbHdl = NULL; 
+ ( SMB_DESC_FCH	*descP, OSS_HANDLE		*osHdl, void			**smbHdlP )
+ {
+    u_int32     error  = 0;
+    SMB_HANDLE  *smbHdl = NULL;
     u_int32		gotSize = 0;
-#ifdef MAC_IO_MAPPED    
+#ifdef MAC_IO_MAPPED
 	DBGCMD(	static const char functionName[] = "SMB2 - SMB_FCH_IO_Init:"; )
 #else
     DBGCMD(	static const char functionName[] = "SMB2 - SMB_FCH_Init:"; )
 #endif
-			
+
 	smbHdl   = (SMB_HANDLE*) OSS_MemGet( osHdl, sizeof(SMB_HANDLE), &gotSize );
 	if( smbHdl == NULL )
 	{
@@ -586,7 +587,7 @@ ERR_EXIT:
 	                             SMB_FUNC_SMBUS_BYTE |
 								 SMB_FUNC_SMBUS_BYTE_DATA |
 								 SMB_FUNC_SMBUS_WORD_DATA |
-								 SMB_FUNC_SMBUS_BLOCK_DATA | 
+								 SMB_FUNC_SMBUS_BLOCK_DATA |
 								 SMB_FUNC_SMBUS_HWPEC_CALC;	/* HW PEC supported */
 
     smbHdl->smbComHdl.busyWait  = descP->busyWait;
@@ -602,20 +603,20 @@ ERR_EXIT:
 
 	smbHdl->entries.I2CXfer		= NULL;
 	smbHdl->entries.Ident		= (char* (*)(void))LocSmbIdent;
-		
+
 	error = SMB_COM_Init(smbHdl);
     if( error )
     {
    		DBGWRT_ERR((DBH, "*** %s: SMB_COM_Init\n", functionName ));
-        goto CLEANUP;        
+        goto CLEANUP;
     }
-    
+
     /* clear status first */
 	MWRITE_D8(smbHdl->baseAddr, SMB_HST_STS, SMB_CLEAR_STATUS);
 
     /*
 	 * set E32B bit for block access
-	 * This enables the block commands to transfer or receive up to 32-bytes. 
+	 * This enables the block commands to transfer or receive up to 32-bytes.
 	 */
 	MWRITE_D8(smbHdl->baseAddr, SMB_AUX_CTL, EN_32BYTE_BUFFER);
 
