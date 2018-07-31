@@ -606,7 +606,7 @@ ERR_EXIT:
 
     smbHdl->smbComHdl.busyWait  = descP->busyWait;
 
-	smbHdl->baseAddr 			= descP->baseAddr;
+	smbHdl->baseAddr 			= (MACCESS)descP->baseAddr;
 
 	smbHdl->ownSize  			= gotSize;
 

@@ -277,7 +277,6 @@ static int32 LocSmbXfer
 )
 {
 	u_int16 status  = 0;
-	u_int8  control = 0;
 	u_int8  len = 0;
 	u_int32 error=SMB_ERR_NO, i;
 	u_int16 *wDataP = (u_int16*)dataP;
@@ -436,8 +435,6 @@ ERR_EXIT:
 #endif
  ( SMB_DESC_SCH *descP, OSS_HANDLE *osHdl, void **smbHdlP )
 {
-	u_int8     status  = 0;
-	u_int8     control = 0;
 	u_int32    error   = SMB_ERR_NO;
 	u_int32    gotSize = 0;
 	SMB_HANDLE *smbHdl = NULL;
@@ -476,7 +473,7 @@ ERR_EXIT:
 
 	smbHdl->smbComHdl.busyWait	= descP->busyWait;
 
-	smbHdl->baseAddr			= descP->baseAddr;
+	smbHdl->baseAddr			= (MACCESS)descP->baseAddr;
 
 	smbHdl->ownSize				= gotSize;
 

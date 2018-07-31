@@ -363,6 +363,7 @@ static int mgt5200_i2cRx
 	 * on MPC85XX
 	 */
 	n = I2C_REG_RD( smbHdl, smbHdl->baseAddr, MGT5200_I2C_CTRL, __LINE__ );
+	(void)n;
 
 	*Data = (u_int8)I2C_REG_RD( smbHdl, smbHdl->baseAddr, MGT5200_I2C_DATA, __LINE__ );			/* Read data */
 
@@ -474,6 +475,7 @@ static int mgt5200_i2cRead
 	{
 		I2C_REG_WR( smbHdl, smbHdl->baseAddr, MGT5200_I2C_STAT, 0x00, __LINE__ ); /* clear status register */
 		dummy = I2C_REG_RD( smbHdl, smbHdl->baseAddr, MGT5200_I2C_DATA, __LINE__ );		/* Dummy read to start transfer */
+		(void)dummy;
 	}
 
 	while (Len)
