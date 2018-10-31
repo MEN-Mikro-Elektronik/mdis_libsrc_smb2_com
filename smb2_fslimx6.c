@@ -16,14 +16,6 @@
  *     Switches: SMB_FIXED_HANDLE - don't allocate handle dynamically
  *									instead, use handle from caller
  *
- *-------------------------------[ History ]---------------------------------
- *
- *
- * Revision 1.0  2016/01/07 19:13:41  wzhou
- * Initial Revision
- *
- *
- * cloned from SMB2/COM/smb2_mgt5200.c Rev. 1.10
  *---------------------------------------------------------------------------
  * (c) Copyright 2006..2016 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
  ******************************************************************************/

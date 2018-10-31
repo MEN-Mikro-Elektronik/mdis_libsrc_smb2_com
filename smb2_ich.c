@@ -13,69 +13,6 @@
  *     Required: -
  *     \switches: MAC_IO_MAPPED
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: smb2_ich.c,v $
- * Revision 1.16  2013/07/15 18:05:34  channoyer
- * R: Not easy to build the BSP from IDE
- * M: Update MEN specific files accordingly
- *
- * Revision 1.15  2012/12/17 14:24:01  dpfeuffer
- * R: block r/w and PEC support requested from customer (for F18E)
- * M: block r/w and PEC support implemented
- *
- * Revision 1.14  2012/02/17 08:18:01  dpfeuffer
- * R: AMD FCH SMB controller support
- * M: LocWaitBusyReady(): delay added for FCH
- *
- * Revision 1.13  2010/06/11 09:04:37  ufranke
- * R: sometimes wasting time during transfer
- * M: LocWaitBusyReady() fixed
- *
- * Revision 1.12  2009/03/17 14:45:03  dpfeuffer
- * R: doxygen warning
- * M: cosmetics
- *
- * Revision 1.11  2009/03/17 13:59:28  dpfeuffer
- * R: compiler warnings wit VC2008 64bit compiler
- * M: debug prints with pointers changed to %p
- *
- * Revision 1.10  2007/10/09 09:34:01  SVogel
- * added busyWait initialization
- *
- * Revision 1.9  2007/07/19 15:13:55  DPfeuffer
- * cast for Windows compiler was necessary because MACCESS modification
- *
- * Revision 1.8  2007/02/20 15:10:29  DPfeuffer
- * - undo: changed interface of *_Init() and *_Exit functions
- *         (VxW6.3 must consider this by disabling strict aliasing)
- *
- * Revision 1.7  2006/11/15 08:07:58  svogel
- * adaptions due to interface change of common library
- * added
- * -----
- * + smb quick command support
- *
- * Revision 1.6  2006/02/27 15:26:48  DPfeuffer
- * SMB_ICH_Init(): alertPollFreq parameter passing added
- *
- * Revision 1.5  2006/02/22 16:02:06  DPfeuffer
- * LocSmbXfer(): SMB_ACC_BYTE_DATA, SMB_ACC_WORD_DATA fixed
- *
- * Revision 1.4  2006/02/10 15:44:12  SVogel
- * bugfix in SMB_ICH_init
- *
- * Revision 1.3  2005/11/28 09:35:27  SVogel
- * Added doxygen documentation.
- *
- * Revision 1.2  2005/11/24 14:45:23  SVogel
- * Removed define OSSH.
- *
- * Revision 1.1  2005/11/24 10:15:12  SVogel
- * Initial Revision
- *
- *
- *
  *---------------------------------------------------------------------------
   *  (c) Copyright 2005 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
  ******************************************************************************/

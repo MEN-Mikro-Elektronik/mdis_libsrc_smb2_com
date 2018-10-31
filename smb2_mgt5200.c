@@ -19,55 +19,6 @@
  *     Switches: SMB_FIXED_HANDLE - don't allocate handle dynamically
  *									instead, use handle from caller
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: smb2_mgt5200.c,v $
- * Revision 1.10  2010/06/14 13:29:36  dpfeuffer
- * R: Windows PREfast warnings
- * M: debug prints modified
- *
- * Revision 1.9  2009/03/17 13:59:35  dpfeuffer
- * R: compiler warnings wit VC2008 64bit compiler
- * M: debug prints with pointers changed to %p
- *
- * Revision 1.8  2008/09/15 16:45:01  ufranke
- * R: diab compiler warnings
- * M: cosmetics
- *
- * Revision 1.7  2007/09/12 12:19:32  ufranke
- * fixed
- * - set smbHdl->smbComHdl.busyWait at init
- * - mgt5200_waitTranfserProgressComplete() unsave detection of transfer start edge
- * replaced by detection of IRQ flag due to completed transfer
- * - timeout counter compare in mgt5200_i2cWaitWhileBusy() and mgt5200_waitTranfserProgressComplete()
- * added
- * + mgt5200_smbUseOssDelay()
- *
- * Revision 1.6  2007/02/27 20:37:52  rt
- * fixed:
- * - wrong Register at Master Enable
- *
- * Revision 1.5  2007/02/20 15:10:34  DPfeuffer
- * - undo: changed interface of *_Init() and *_Exit functions
- *         (VxW6.3 must consider this by disabling strict aliasing)
- *
- * Revision 1.4  2006/09/11 11:26:41  cs
- * changed:
- *   - interface of *_Init() and *_Exit functions (avoid warnings for VxW6.3)
- * fixed:
- *   - don't free handle when compiled with SMB_FIXED_HANDLE
- *
- * Revision 1.3  2006/04/27 14:01:49  DPfeuffer
- * mgt5200_i2cXfer(): return value fixed for error case
- *
- * Revision 1.2  2006/02/09 15:54:01  DPfeuffer
- * some casts added to compile with VC
- *
- * Revision 1.1  2006/02/07 19:13:41  cschuster
- * Initial Revision
- *
- *
- * cloned from SMB/MGT5200/sysmanagbus_mgt5200.c Rev. 1.5
  *---------------------------------------------------------------------------
  * (c) Copyright 2006..2007 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
  ******************************************************************************/

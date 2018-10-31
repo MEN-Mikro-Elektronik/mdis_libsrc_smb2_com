@@ -12,35 +12,6 @@
  *     Required: -
  *     \switches -
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: smb2_sch.c,v $
- * Revision 1.6  2014/02/20 17:03:02  MRoth
- * R: 1) Lib returns SMB_ERR_BUSY if no actual device is on the SMB address
- * R: 2) cosmetics
- * M: 1) remanufactured LocWaitBusyReady function
- *        - added return values SMB_ERR_NO_DEVICE and SMB_ERR_NO
- *    2) updated function headers, comments and removed redundant access macros
- *
- * Revision 1.5  2013/07/29 16:31:15  MRoth
- * R: block r/w support needed for F75P PIC
- * M: block r/w support implemented
- *
- * Revision 1.4  2012/01/30 11:50:01  dpfeuffer
- * R: unused define
- * M: INTR define removed
- *
- * Revision 1.3  2009/03/17 14:45:06  dpfeuffer
- * R: doxygen warning
- * M: cosmetics
- *
- * Revision 1.2  2009/03/17 13:59:30  dpfeuffer
- * R: compiler warnings wit VC2008 64bit compiler
- * M: debug prints with pointers changed to %p
- *
- * Revision 1.1  2008/10/20 10:42:58  MSoehnlein
- * Initial Revision
- *
  *---------------------------------------------------------------------------
  * (c) Copyright 2005 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
  ******************************************************************************/
