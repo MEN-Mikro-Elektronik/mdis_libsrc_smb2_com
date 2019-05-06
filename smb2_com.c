@@ -1414,7 +1414,7 @@ static int32 smbComCheckPec(
 
 
 
-/** \page dummy
+/** \page smb2dummy MEN logo
   \menimages
 */
 
