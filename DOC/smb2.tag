@@ -13,7 +13,7 @@
   </compound>
   <compound kind="file">
     <name>smb2.h</name>
-    <path>D:/WORK/WINDOWS/INCLUDE/COM/MEN/</path>
+    <path>/opt/menlinux/INCLUDE/COM/MEN/</path>
     <filename>smb2_8h</filename>
     <class kind="struct">I2CMESSAGE</class>
     <class kind="struct">SMB_COM_HANDLE</class>
@@ -282,7 +282,7 @@
   </compound>
   <compound kind="file">
     <name>smb2_com.c</name>
-    <path>D:/WORK/WINDOWS/LIBSRC/SMB2/COM/</path>
+    <path>/opt/menlinux/LIBSRC/SMB2/COM/</path>
     <filename>smb2__com_8c</filename>
     <class kind="struct">SMB_ALERT_NODE</class>
     <member kind="function">
@@ -294,7 +294,7 @@
   </compound>
   <compound kind="file">
     <name>smb2_fch.c</name>
-    <path>D:/WORK/WINDOWS/LIBSRC/SMB2/COM/</path>
+    <path>/opt/menlinux/LIBSRC/SMB2/COM/</path>
     <filename>smb2__fch_8c</filename>
     <class kind="struct">SMB_HANDLE</class>
     <member kind="function">
@@ -306,7 +306,7 @@
   </compound>
   <compound kind="file">
     <name>smb2_ich.c</name>
-    <path>D:/WORK/WINDOWS/LIBSRC/SMB2/COM/</path>
+    <path>/opt/menlinux/LIBSRC/SMB2/COM/</path>
     <filename>smb2__ich_8c</filename>
     <class kind="struct">SMB_HANDLE</class>
     <member kind="function">
@@ -318,7 +318,7 @@
   </compound>
   <compound kind="file">
     <name>smb2_sch.c</name>
-    <path>D:/WORK/WINDOWS/LIBSRC/SMB2/COM/</path>
+    <path>/opt/menlinux/LIBSRC/SMB2/COM/</path>
     <filename>smb2__sch_8c</filename>
     <class kind="struct">SMB_HANDLE</class>
     <member kind="function">
@@ -937,9 +937,9 @@
     </member>
   </compound>
   <compound kind="page">
-    <name>dummy</name>
-    <title></title>
-    <filename>dummy</filename>
+    <name>smb2dummy</name>
+    <title>MEN logo</title>
+    <filename>smb2dummy</filename>
   </compound>
   <compound kind="group">
     <name>_SMB2_ERR</name>
