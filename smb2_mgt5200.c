@@ -4,8 +4,6 @@
  *      Project: MENMON MGT5200
  *
  *       Author: cs
- *        $Date: 2010/06/14 13:29:36 $
- *    $Revision: 1.10 $
  *
  *  Description: system managment bus driver for the MGT5200 I2C controller
  *				 and MPC85XX I2C controller which is (almost) register

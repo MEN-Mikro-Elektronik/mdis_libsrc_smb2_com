@@ -4,8 +4,6 @@
  *      \project  SMB2 library
  *
  *       Author  sv
- *        $Date: 2013/07/15 18:05:34 $
- *    $Revision: 1.16 $
  *
  *      \brief  system managment bus driver for the ICH
  *				SMB controller

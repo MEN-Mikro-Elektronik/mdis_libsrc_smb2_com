@@ -4,8 +4,6 @@
  *     \project  SMB2 library
  *
  *       Author  Christian.Schuster@men.de
- *        $Date: 2013/11/06 08:14:46 $
- *    $Revision: 1.20 $
  *
  *       \brief  common function of system managment bus drivers
  *

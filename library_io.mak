@@ -1,8 +1,6 @@
 #**************************  M a k e f i l e ********************************
 #  
 #         Author: dieter.pfeuffer@men.de
-#          $Date: 2010/12/20 13:14:54 $
-#      $Revision: 1.3 $
 #  
 #    Description: makefile descriptor for SMB2 library
 #                      

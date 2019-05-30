@@ -4,8 +4,6 @@
  *      \project  SMB2 library
  *
  *       Author  dieter.pfeuffer@men.de
- *        $Date: $
- *    $Revision: $
  *
  *      \brief  FCH SMB controller support
  *

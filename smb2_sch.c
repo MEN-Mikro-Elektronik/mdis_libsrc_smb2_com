@@ -4,8 +4,6 @@
  *      \project  SMB2 library
  *
  *       \author matthias.soehnlein@men.de
- *        $Date: 2014/02/20 17:03:02 $
- *    $Revision: 1.6 $
  *
  *        \brief system managment bus driver for the SCH SMB controller
  *

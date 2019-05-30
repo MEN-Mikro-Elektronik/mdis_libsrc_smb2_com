@@ -4,8 +4,6 @@
  *     \project  SMB2 library
  *
  *      \author  Christian.Schuster@men.de
- *        $Date: 2012/01/30 11:50:04 $
- *    $Revision: 1.19 $
  *
  *       \brief  system managment bus driver for the MEN 16Z001_SMB FPGA
  *				 SMB controller
