@@ -47,6 +47,8 @@
 #define SMB_COMPILE
 #include <MEN/smb2.h>
 
+static const char IdentString[]=MENT_XSTR(MAK_REVISION);
+
 /*-----------------------------------------+
 |  TYPEDEFS                                |
 +------------------------------------------*/
@@ -454,7 +456,7 @@ CLEANUP:
  ****************************************************************************/
 static char *mgt5200_smbIdent( void )	/* nodoc */
 {
-    return( "SMB - SMB library: $Id: smb2_mgt5200.c,v 1.10 2010/06/14 13:29:36 dpfeuffer Exp $" );
+    return( (char*) IdentString );
 }/* mgt5200_smbIdent */
 
 

@@ -41,6 +41,8 @@
 #define SMB_COMPILE
 #include <MEN/smb2.h>
 
+static const char IdentString[]=MENT_XSTR(MAK_REVISION);
+
 /*-----------------------------------------+
 |  TYPEDEFS                                |
 +------------------------------------------*/
@@ -97,7 +99,7 @@ static int32 Z001_I2cXfer( SMB_HANDLE *smbHdl,
  ****************************************************************************/
 static char *Z001_smbIdent( void )
 {
-    return( "SMB - MEN Z001_SMB library: $Id: smb2_menz001.c,v 1.19 2012/01/30 11:50:04 dpfeuffer Exp $\n");
+    return( (char*) IdentString );
 }/*Z001_smbIdent*/
 
 

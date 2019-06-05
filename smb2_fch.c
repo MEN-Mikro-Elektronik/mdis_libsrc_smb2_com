@@ -37,6 +37,8 @@
 #define SMB_COMPILE
 #include <MEN/smb2.h>
 
+static const char IdentString[]=MENT_XSTR(MAK_REVISION);
+
 /*-----------------------------------------+
 |  TYPEDEFS                                |
 +------------------------------------------*/
@@ -204,7 +206,7 @@ static int32 LocSmbXfer( SMB_HANDLE *smbHdl, u_int32 flags, u_int16 addr,
  ****************************************************************************/
 static char *LocSmbIdent( void )
 {
-    return( "FCH SMB - SMB2 library: $Id: smb2_fch.c,v 1.1 2016/04/06 12:00:00 dpfeuffer Exp $" );
+    return( (char*) IdentString );
 }/*LocSmbIdent*/
 
 /*******************************  LocWaitBusyReady  *************************/
