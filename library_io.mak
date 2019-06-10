@@ -23,10 +23,15 @@
 
 
 MAK_NAME=smb2_io
+# the next line is updated during the MDIS installation
+STAMPED_REVISION="mdis_libsrc_smb2_com_01_34-8-g6742436_2019-06-07"
+
+DEF_REVISION=MAK_REVISION=$(STAMPED_REVISION)
 
 MAK_LIBS=
 
-MAK_SWITCH=$(SW_PREFIX)MAC_IO_MAPPED
+MAK_SWITCH=$(SW_PREFIX)MAC_IO_MAPPED \
+		$(SW_PREFIX)$(DEF_REVISION)
 
 MAK_INCL=$(MEN_INC_DIR)/men_typs.h \
          $(MEN_INC_DIR)/oss.h \
