@@ -1104,7 +1104,7 @@ static int32 smbComSmbXferEmulate
 				"under I2C emulation!!!\n", functionName) );
 			return SMB_ERR_NOT_SUPPORTED;
 		} else {
-			msg[0].len = data[0] + 2;
+			msg[0].len = (u_int16)(data[0] + 2);
 			if (msg[0].len > SMB_BLOCK_MAX_BYTES + 2) {
 				DBGWRT_ERR( (DBH, "*** %s: Invalid block write size (%d)\n",
 					functionName, data[0]) );
@@ -1124,7 +1124,7 @@ static int32 smbComSmbXferEmulate
 		if (read_write == SMB_READ) {
 			msg[1].len = SMB_BLOCK_MAX_BYTES;
 		} else {
-			msg[0].len = data[0] + 1;
+			msg[0].len = (u_int16)(data[0] + 1);
 			if (msg[0].len > SMB_BLOCK_MAX_BYTES + 1) {
 				DBGWRT_ERR( (DBH, "*** %s: Called with "
 					"invalid block write size (%d)\n", functionName, data[0]) );

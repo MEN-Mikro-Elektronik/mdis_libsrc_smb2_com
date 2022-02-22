@@ -753,8 +753,9 @@ static int32 Z001_SmbXfer
 			   (read_write ? "read" : "write"),
 			   addr, flags, size) );
 
-	if(	addr & 0x01 )
+	if(	addr & 0x01 ) {
 		return( SMB_ERR_ADDR );
+    }
 
 	if( (error = initClrChkStatus( smbHdl )) ){
 		goto ERR_EXIT;
