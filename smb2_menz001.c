@@ -191,7 +191,7 @@ int32 n;
 	DBGWRT_2((DBH,"Z001 waitBusyReady\n"));
 	/* wait for transfer in progress */
 	if( waitBusy && smbHdl->mikroDelay ) {
-		/* Mikrodelay: delay() does 5ï¿½s delay at a time */
+		/* Mikrodelay: delay() does 5µs delay at a time */
 		n = smbHdl->timeOut * 1000/5 ;
 	    do {
 			status = readStatus(smbHdl->baseAddr);
@@ -219,7 +219,7 @@ int32 n;
 		delay( smbHdl );
 	}
 
-	/* Mikrodelay: delay() does 5ï¿½s delay at a time */
+	/* Mikrodelay: delay() does 5µs delay at a time */
 	n = smbHdl->timeOut * (smbHdl->mikroDelay ? 1000/5 : 1 );
 	/* wait for transfer to finish */
     do{
@@ -335,7 +335,7 @@ static u_int32 grabHostCtrl( SMB_HANDLE *smbHdl )
 	u_int8  status;
 	int32 n;
 
-	/* Mikrodelay: delay() does 5ï¿½s delay at a time */
+	/* Mikrodelay: delay() does 5µs delay at a time */
 	n = smbHdl->timeOut * ( smbHdl->mikroDelay ? 1000/5 : 1 );
 	status = readStatus( (MACCESS)smbHdl->baseAddr );
 
@@ -753,8 +753,8 @@ static int32 Z001_SmbXfer
 			   (read_write ? "read" : "write"),
 			   addr, flags, size) );
 
-	if(	addr & 0x01 )
-		return( SMB_ERR_ADDR );
+    if(	addr & 0x01 )
+    	return( SMB_ERR_ADDR );
 
 	if( (error = initClrChkStatus( smbHdl )) ){
 		goto ERR_EXIT;

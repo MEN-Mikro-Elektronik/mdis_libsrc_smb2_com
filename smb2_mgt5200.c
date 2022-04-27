@@ -315,7 +315,7 @@ static int mgt5200_i2cRx
 	 */
 	n = I2C_REG_RD( smbHdl, smbHdl->baseAddr, MGT5200_I2C_CTRL, __LINE__ );
 	(void)n;
-    I2C_REG_WR( smbHdl, smbHdl->baseAddr, MGT5200_I2C_STAT, 0x00, __LINE__ ); /* clear status register */
+	I2C_REG_WR( smbHdl, smbHdl->baseAddr, MGT5200_I2C_STAT, 0x00, __LINE__ ); /* clear status register */
 	*Data = (u_int8)I2C_REG_RD( smbHdl, smbHdl->baseAddr, MGT5200_I2C_DATA, __LINE__ );			/* Read data */
 
 	return SMB_ERR_NO;
